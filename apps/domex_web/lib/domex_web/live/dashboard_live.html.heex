@@ -17,6 +17,7 @@
 
       <div class="flex items-center gap-2">
         <.dm_btn
+          id="btn-discover"
           phx-click="trigger_discovery"
           variant="outline"
           size="sm"
@@ -28,6 +29,7 @@
         </.dm_btn>
 
         <.dm_btn
+          id="btn-add-device"
           phx-click="open_add_modal"
           variant="primary"
           size="sm"
@@ -76,6 +78,7 @@
                 </div>
               </div>
               <.dm_btn
+                id={"btn-connect-#{id}"}
                 phx-click="add_discovered"
                 phx-value-id={id}
                 variant="primary"
@@ -106,10 +109,10 @@
           </p>
         </div>
         <div class="flex justify-center gap-3 pt-2">
-          <.dm_btn phx-click="trigger_discovery" variant="outline" size="sm">
+          <.dm_btn id="btn-empty-scan" phx-click="trigger_discovery" variant="outline" size="sm">
             Scan Network
           </.dm_btn>
-          <.dm_btn phx-click="open_add_modal" variant="primary" size="sm">
+          <.dm_btn id="btn-empty-add" phx-click="open_add_modal" variant="primary" size="sm">
             Add Manually
           </.dm_btn>
         </div>
@@ -231,12 +234,23 @@
       >
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-bold text-on-surface">Add Smart Device</h3>
-          <.dm_btn phx-click="close_add_modal" variant="ghost" size="sm" shape="circle">
+          <.dm_btn
+            id="btn-modal-close"
+            phx-click="close_add_modal"
+            variant="ghost"
+            size="sm"
+            shape="circle"
+          >
             <.dm_mdi name="close" class="size-5" />
           </.dm_btn>
         </div>
 
-        <.form for={@new_device_form} phx-submit="save_device" class="space-y-4">
+        <.form
+          for={@new_device_form}
+          id="add-device-form"
+          phx-submit="save_device"
+          class="space-y-4"
+        >
           <div class="space-y-1">
             <label class="text-xs font-semibold text-on-surface-variant">Device Name</label>
             <input
@@ -312,10 +326,15 @@
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <.dm_btn type="button" phx-click="close_add_modal" variant="ghost">
+            <.dm_btn
+              id="btn-modal-cancel"
+              type="button"
+              phx-click="close_add_modal"
+              variant="ghost"
+            >
               Cancel
             </.dm_btn>
-            <.dm_btn type="submit" variant="primary">
+            <.dm_btn id="btn-modal-submit" type="submit" variant="primary">
               Save & Connect
             </.dm_btn>
           </div>

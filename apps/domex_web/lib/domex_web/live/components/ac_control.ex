@@ -60,6 +60,7 @@ defmodule DomexWeb.Components.AcControl do
         </div>
 
         <.dm_btn
+          id={"btn-toggle-ac-#{@shadow.id}"}
           phx-click="toggle"
           phx-value-id={@shadow.id}
           phx-target={@target}
@@ -76,6 +77,7 @@ defmodule DomexWeb.Components.AcControl do
       <div class="flex items-center justify-between bg-surface-container-high rounded-2xl p-4">
         <!-- Decrement -->
         <.dm_btn
+          id={"btn-temp-dec-#{@shadow.id}"}
           phx-click="change_temp"
           phx-value-id={@shadow.id}
           phx-value-delta="-1"
@@ -103,6 +105,7 @@ defmodule DomexWeb.Components.AcControl do
         
     <!-- Increment -->
         <.dm_btn
+          id={"btn-temp-inc-#{@shadow.id}"}
           phx-click="change_temp"
           phx-value-id={@shadow.id}
           phx-value-delta="1"
@@ -177,6 +180,7 @@ defmodule DomexWeb.Components.AcControl do
       <div class="pt-2 border-t border-outline-variant flex items-center justify-between">
         <span class="text-sm font-medium text-on-surface-variant">Vertical Air Swing</span>
         <.dm_btn
+          id={"btn-swing-#{@shadow.id}"}
           phx-click="toggle_swing"
           phx-value-id={@shadow.id}
           phx-target={@target}

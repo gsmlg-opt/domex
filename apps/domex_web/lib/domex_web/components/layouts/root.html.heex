@@ -19,8 +19,13 @@
     <script
       defer
       phx-track-static
-      type="text/javascript"
-      src={DuskmoonBundler.static_path(DomexWeb.Endpoint, "/assets/app.js")}
+      type="module"
+      src={
+        DuskmoonBundler.static_path(DomexWeb.Endpoint, "/assets/js/app.js",
+          profile: :domex_web,
+          outdir: "priv/static/assets"
+        )
+      }
     >
     </script>
   </head>

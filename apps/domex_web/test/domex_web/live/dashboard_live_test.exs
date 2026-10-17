@@ -5,6 +5,14 @@ defmodule DomexWeb.DashboardLiveTest do
   alias Domex.Device.Shadow
   alias Domex.PubSub
 
+  setup do
+    for %Shadow{id: id} <- Domex.list_devices() do
+      Domex.remove_device(id)
+    end
+
+    :ok
+  end
+
   test "renders dashboard with title and action buttons", %{conn: conn} do
     {:ok, _view, html} = live(conn, ~p"/")
     assert html =~ "Domex"
@@ -73,5 +81,79 @@ defmodule DomexWeb.DashboardLiveTest do
     assert html =~ "192.168.1.180:6444"
 
     Domex.remove_device(id)
+  end
+
+  test "clicking Discover button triggers discovery and shows flash notification", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/")
+
+    assert has_element?(view, "#btn-discover")
+    render_click(element(view, "#btn-discover"))
+
+    assert render(view) =~ "Discovery sweep broadcasted to local network"
+  end
+
+  test "clicking Add Device button opens and closes the add device modal", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/")
+
+    refute has_element?(view, "#add-device-form")
+
+    assert has_element?(view, "#btn-add-device")
+    render_click(element(view, "#btn-add-device"))
+
+    assert has_element?(view, "#add-device-form")
+    assert has_element?(view, "#btn-modal-close")
+    assert has_element?(view, "#btn-modal-cancel")
+    assert has_element?(view, "#btn-modal-submit")
+
+    render_click(element(view, "#btn-modal-close"))
+    refute has_element?(view, "#add-device-form")
+
+    # Re-open and close with cancel button
+    render_click(element(view, "#btn-add-device"))
+    assert has_element?(view, "#add-device-form")
+
+    render_click(element(view, "#btn-modal-cancel"))
+    refute has_element?(view, "#add-device-form")
+  end
+
+  test "empty state Scan Network and Add Manually buttons work", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/")
+
+    assert has_element?(view, "#btn-empty-scan")
+    render_click(element(view, "#btn-empty-scan"))
+    assert render(view) =~ "Discovery sweep broadcasted to local network"
+
+    assert has_element?(view, "#btn-empty-add")
+    render_click(element(view, "#btn-empty-add"))
+    assert has_element?(view, "#add-device-form")
+
+    render_click(element(view, "#btn-modal-close"))
+    refute has_element?(view, "#add-device-form")
+  end
+
+  test "submitting add device form creates device and closes modal", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/")
+
+    render_click(element(view, "#btn-add-device"))
+    assert has_element?(view, "#add-device-form")
+
+    new_id = "test_form_lamp_#{:erlang.unique_integer([:positive])}"
+
+    render_submit(element(view, "#add-device-form"), %{
+      "device" => %{
+        "id" => new_id,
+        "name" => "Corner Reading Lamp",
+        "type" => "light",
+        "adapter" => "Domex.Adapter.YeelightLan",
+        "host" => "192.168.1.199",
+        "port" => "55443"
+      }
+    })
+
+    refute has_element?(view, "#add-device-form")
+    assert render(view) =~ "Corner Reading Lamp"
+    assert render(view) =~ "Device &#39;Corner Reading Lamp&#39; created"
+
+    Domex.remove_device(new_id)
   end
 end

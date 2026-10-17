@@ -26,3 +26,15 @@
 
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
+
+/* Form submission loading state & disabled custom element buttons */
+form.phx-submit-loading el-dm-button,
+form.phx-submit-loading button[type="submit"],
+form.phx-submit-loading input[type="submit"],
+el-dm-button[disabled],
+el-dm-button[aria-disabled="true"],
+el-dm-button.phx-click-loading {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}

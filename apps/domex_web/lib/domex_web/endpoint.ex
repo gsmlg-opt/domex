@@ -36,7 +36,7 @@ defmodule DomexWeb.Endpoint do
 
     plug DuskmoonBundler.DevServer,
       profile: :domex_web,
-      root: "apps/domex_web/assets/js"
+      root: "apps/domex_web/assets"
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

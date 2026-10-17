@@ -41,6 +41,7 @@ defmodule DomexWeb.Components.GenericSwitch do
         </div>
 
         <.dm_btn
+          id={"btn-toggle-#{@shadow.id}"}
           phx-click="toggle"
           phx-value-id={@shadow.id}
           phx-target={@target}

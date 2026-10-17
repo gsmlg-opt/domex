@@ -42,6 +42,7 @@ defmodule DomexWeb.Components.LightControl do
         </div>
 
         <.dm_btn
+          id={"btn-toggle-light-#{@shadow.id}"}
           phx-click="toggle"
           phx-value-id={@shadow.id}
           phx-target={@target}

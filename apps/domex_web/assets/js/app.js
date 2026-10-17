@@ -1,7 +1,7 @@
 import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
-import * as DuskmoonHooks from "../../../../deps/phoenix_duskmoon/assets/js/hooks/index.js"
+import * as DuskmoonHooks from "phoenix_duskmoon/hooks"
 
 import {register as registerButton} from "@duskmoon-dev/el-button"
 import {register as registerCard} from "@duskmoon-dev/el-card"

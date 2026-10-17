@@ -54,10 +54,10 @@ defmodule DomexWeb.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       "assets.setup": ["npm.install"],
-      "assets.build": ["duskmoon_bundler.build domex_web --tailwind"],
+      "assets.build": ["duskmoon_bundler.build domex_web --tailwind --no-hash"],
       "assets.deploy": [
         "phx.digest.clean",
-        "duskmoon_bundler.build domex_web --tailwind",
+        "duskmoon_bundler.build domex_web --tailwind --no-hash",
         "phx.digest"
       ]
     ]
