@@ -27,6 +27,8 @@ domex/
 │   │
 │   └── domex_web/            # Phoenix 1.8 & LiveView 1.1 Web interface
 │       ├── Bandit HTTP server & WebSocket endpoint
+│       ├── UI system: phoenix_duskmoon & @duskmoon-dev/* custom elements
+│       ├── Bundler: duskmoon_bundler (native Rust NIFs; no Node.js/esbuild/tailwind CLI required)
 │       ├── DashboardLive (Real-time device grid & manual device modal)
 │       ├── DeviceLive (Detailed diagnostics & interactive controls)
 │       └── Live components (LightControl, AcControl, GenericSwitch)
