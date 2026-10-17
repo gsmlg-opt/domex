@@ -14,25 +14,26 @@ config :domex_web, DomexWeb.Endpoint,
   pubsub_server: Domex.PubSub,
   live_view: [signing_salt: "McgtPV5f"]
 
-# Configure esbuild
-config :esbuild,
-  version: "0.25.4",
-  domex_web: [
-    args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
-    cd: Path.expand("../apps/domex_web/assets", __DIR__),
-    env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
-  ]
-
-# Configure tailwind
-config :tailwind,
-  version: "4.1.12",
-  domex_web: [
-    args: ~w(
-      --input=assets/css/app.css
-      --output=priv/static/assets/css/app.css
-    ),
-    cd: Path.expand("../apps/domex_web", __DIR__)
+# Configure duskmoon_bundler
+config :duskmoon_bundler, :domex_web,
+  entry: "apps/domex_web/assets/js/app.js",
+  root: "apps/domex_web/assets",
+  outdir: "apps/domex_web/priv/static/assets",
+  resolve_dirs: ["apps", "deps", "node_modules", "apps/domex_web/node_modules"],
+  external: ~w(/fonts/* /images/*),
+  sourcemap: :hidden,
+  tailwind: [
+    css: "apps/domex_web/assets/css/app.css",
+    sources: [
+      %{base: "apps/domex_web/lib", pattern: "**/*.{ex,heex}"},
+      %{base: "apps/domex_web/assets", pattern: "**/*.{css,js,ts,jsx,tsx}"},
+      %{base: "deps/phoenix_duskmoon/lib", pattern: "**/*.{ex,heex}"},
+      %{base: "deps/phoenix_duskmoon/assets/js", pattern: "**/*.{js,ts,jsx,tsx}"}
+    ]
+  ],
+  server: [
+    prefix: "/assets",
+    watch_dirs: ["apps/domex_web/lib", "apps/domex_web/assets"]
   ]
 
 # Configure Elixir's Logger

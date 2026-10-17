@@ -9,8 +9,7 @@ config :domex_web, DomexWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "9W0k1LMOi+1Args0AS2CQELCBE/MuY8aN264+n+gO7qVU5yJxBwJn6t+8B4D8lA7",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:domex_web, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:domex_web, ~w(--watch)]}
+    duskmoon_bundler: {Mix.Tasks.DuskmoonBundler.Dev, :run, [["domex_web", "--tailwind"]]}
   ]
 
 # Reload browser tabs when matching files change.

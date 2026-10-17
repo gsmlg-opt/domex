@@ -36,17 +36,11 @@ defmodule DomexWeb.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.1.0"},
-      {:lazy_html, ">= 0.1.0", only: :test},
+      {:lazy_html, ">= 0.1.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.2.0",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
+      {:phoenix_duskmoon, "~> 10.0"},
+      {:duskmoon_bundler_runtime, "~> 10.0"},
+      {:duskmoon_bundler, "~> 10.0", runtime: Mix.env() != :prod},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
@@ -59,11 +53,11 @@ defmodule DomexWeb.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind domex_web", "esbuild domex_web"],
+      "assets.setup": ["npm.install"],
+      "assets.build": ["duskmoon_bundler.build domex_web --tailwind"],
       "assets.deploy": [
-        "tailwind domex_web --minify",
-        "esbuild domex_web --minify",
+        "phx.digest.clean",
+        "duskmoon_bundler.build domex_web --tailwind",
         "phx.digest"
       ]
     ]

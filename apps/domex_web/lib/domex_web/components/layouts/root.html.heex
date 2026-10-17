@@ -1,36 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="moonlight" class="h-full">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Domex" suffix=" · Phoenix Framework">
-      {assigns[:page_title]}
-    </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
-    </script>
-    <script>
-      (() => {
-        const setTheme = (theme) => {
-          if (theme === "system") {
-            localStorage.removeItem("phx:theme");
-            document.documentElement.removeAttribute("data-theme");
-          } else {
-            localStorage.setItem("phx:theme", theme);
-            document.documentElement.setAttribute("data-theme", theme);
-          }
-        };
-        if (!document.documentElement.hasAttribute("data-theme")) {
-          setTheme(localStorage.getItem("phx:theme") || "system");
-        }
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
-        
-        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
-      })();
+    <title>{assigns[:page_title] || "Domex - Local Smart Home Hub"}</title>
+    <link rel="icon" type="image/svg+xml" href={~p"/images/logo.svg"} />
+    <link
+      phx-track-static
+      rel="stylesheet"
+      href={
+        DuskmoonBundler.static_path(DomexWeb.Endpoint, "/assets/css/app.css",
+          profile: :domex_web,
+          outdir: "priv/static/assets"
+        )
+      }
+    />
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={DuskmoonBundler.static_path(DomexWeb.Endpoint, "/assets/app.js")}
+    >
     </script>
   </head>
-  <body>
+  <body class="h-full antialiased bg-surface text-on-surface">
     {@inner_content}
   </body>
 </html>

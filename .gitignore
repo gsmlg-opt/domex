@@ -27,11 +27,16 @@ domex-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
+apps/*/priv/static/assets/
+apps/*/priv/static/cache_manifest.json
+apps/*/priv/static/**/*.gz
+apps/*/priv/static/*-*.ico
+apps/*/priv/static/*-*.txt
+apps/*/priv/static/images/*-*.svg
+apps/domex_core/priv/data/*.dets
 
-# Ignore digested assets cache.
-/priv/static/cache_manifest.json
-
-# In case you use Node.js/npm, you want to ignore these.
+# In case you use Node.js/npm/bun, you want to ignore these.
 npm-debug.log
-/assets/node_modules/
+node_modules/
+apps/*/node_modules/
 

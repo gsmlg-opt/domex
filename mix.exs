@@ -24,12 +24,12 @@ defmodule Domex.Umbrella.MixProject do
   defp aliases do
     [
       setup: ["cmd mix setup"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind domex_web", "esbuild domex_web"],
+      "assets.setup": ["do --app domex_web cmd mix npm.install"],
+      "assets.build": ["duskmoon_bundler.build domex_web --tailwind"],
       "assets.deploy": [
-        "tailwind domex_web --minify",
-        "esbuild domex_web --minify",
-        "phx.digest"
+        "do --app domex_web cmd mix phx.digest.clean",
+        "duskmoon_bundler.build domex_web --tailwind",
+        "do --app domex_web cmd mix phx.digest"
       ],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
     ]

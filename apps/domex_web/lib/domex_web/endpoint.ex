@@ -33,6 +33,10 @@ defmodule DomexWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
+
+    plug DuskmoonBundler.DevServer,
+      profile: :domex_web,
+      root: "apps/domex_web/assets/js"
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

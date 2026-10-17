@@ -1,13 +1,13 @@
 <Layouts.app flash={@flash}>
-  <div class="space-y-8 -mt-10">
+  <div class="space-y-8">
     <!-- Top Action Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant">
       <div>
-        <h1 class="text-3xl font-black tracking-tight flex items-center gap-2">
-          <span>Domex</span>
-          <span class="badge badge-primary badge-sm">Local Hub</span>
+        <h1 class="text-3xl font-black tracking-tight flex items-center gap-2 text-on-surface">
+          <span>Smart Home</span>
+          <.dm_badge variant="primary" size="sm" pill>Local</.dm_badge>
         </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">
+        <p class="text-sm text-on-surface-variant mt-0.5">
           {map_size(@devices)} configured devices &bull; {Enum.count(
             Map.values(@devices),
             & &1.online?
@@ -16,81 +16,104 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button
+        <.dm_btn
           phx-click="trigger_discovery"
-          class="btn btn-sm btn-outline gap-1.5 rounded-lg"
+          variant="outline"
+          size="sm"
           title="Scan local network for devices"
+          class="gap-1.5"
         >
-          <.icon name="hero-magnifying-glass" class="size-4 motion-safe:animate-pulse" />
+          <.dm_mdi name="magnify" class="size-4 motion-safe:animate-pulse" />
           <span>Discover</span>
-        </button>
+        </.dm_btn>
 
-        <button
+        <.dm_btn
           phx-click="open_add_modal"
-          class="btn btn-sm btn-primary gap-1.5 rounded-lg shadow-sm"
+          variant="primary"
+          size="sm"
+          class="gap-1.5"
         >
-          <.icon name="hero-plus" class="size-4" />
+          <.dm_mdi name="plus" class="size-4" />
           <span>Add Device</span>
-        </button>
+        </.dm_btn>
       </div>
+    </div>
+    
+<!-- Quick Stats Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <.dm_stat title="Total Devices" value={to_string(map_size(@devices))} />
+      <.dm_stat
+        title="Online"
+        value={to_string(Enum.count(Map.values(@devices), & &1.online?))}
+      />
+      <.dm_stat
+        title="Offline"
+        value={to_string(Enum.count(Map.values(@devices), &(!&1.online?)))}
+      />
+      <.dm_stat title="Discovered" value={to_string(map_size(@discovered))} />
     </div>
     
 <!-- Discovered Devices Banner -->
     <%= if map_size(@discovered) > 0 do %>
-      <div class="bg-primary/10 border border-primary/20 rounded-2xl p-4 space-y-3">
+      <.dm_card variant="bordered" class="bg-primary/10 border-primary/30 p-4 space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2 text-primary font-bold text-sm">
-            <.icon name="hero-sparkles" class="size-5" />
+            <.dm_mdi name="auto-fix" class="size-5" />
             <span>Discovered {map_size(@discovered)} New Device(s) on Local Network</span>
           </div>
-          <span class="text-xs text-base-content/50">Auto-detected via UDP broadcast</span>
+          <span class="text-xs text-on-surface-variant">Auto-detected via UDP broadcast</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
           <%= for {id, meta} <- @discovered do %>
-            <div class="flex items-center justify-between bg-base-100/80 rounded-xl p-3 border border-base-200 shadow-xs">
+            <div class="flex items-center justify-between bg-surface rounded-xl p-3 border border-outline-variant shadow-xs">
               <div class="truncate mr-2">
-                <div class="font-semibold text-sm truncate">
+                <div class="font-semibold text-sm truncate text-on-surface">
                   {meta[:name] || meta["name"] || id}
                 </div>
-                <div class="text-xs text-base-content/60 font-mono">
+                <div class="text-xs text-on-surface-variant font-mono">
                   {meta[:host] || meta["host"]}:{meta[:port] || meta["port"]}
                 </div>
               </div>
-              <button
+              <.dm_btn
                 phx-click="add_discovered"
                 phx-value-id={id}
-                class="btn btn-xs btn-primary rounded-lg shrink-0"
+                variant="primary"
+                size="xs"
+                class="shrink-0"
               >
                 Connect
-              </button>
+              </.dm_btn>
             </div>
           <% end %>
         </div>
-      </div>
+      </.dm_card>
     <% end %>
     
 <!-- Empty State -->
     <%= if map_size(@devices) == 0 do %>
-      <div class="text-center py-16 px-4 bg-base-100 rounded-2xl border border-dashed border-base-300 space-y-4">
-        <div class="size-16 bg-base-200 rounded-full flex items-center justify-center mx-auto text-base-content/40">
-          <.icon name="hero-home" class="size-8" />
+      <.dm_card
+        variant="bordered"
+        class="text-center py-16 px-4 space-y-4 border-dashed border-outline-variant"
+      >
+        <div class="size-16 bg-surface-container-high rounded-full flex items-center justify-center mx-auto text-on-surface-variant">
+          <.dm_mdi name="home-outline" class="size-8" />
         </div>
         <div>
-          <h3 class="text-lg font-bold">No devices configured yet</h3>
-          <p class="text-sm text-base-content/60 max-w-sm mx-auto mt-1">
+          <h3 class="text-lg font-bold text-on-surface">No devices configured yet</h3>
+          <p class="text-sm text-on-surface-variant max-w-sm mx-auto mt-1">
             Scan your local network to discover Yeelight, Xiaomi miIO, and Midea appliances automatically, or add one manually.
           </p>
         </div>
         <div class="flex justify-center gap-3 pt-2">
-          <button phx-click="trigger_discovery" class="btn btn-outline btn-sm rounded-lg">
+          <.dm_btn phx-click="trigger_discovery" variant="outline" size="sm">
             Scan Network
-          </button>
-          <button phx-click="open_add_modal" class="btn btn-primary btn-sm rounded-lg">
+          </.dm_btn>
+          <.dm_btn phx-click="open_add_modal" variant="primary" size="sm">
             Add Manually
-          </button>
+          </.dm_btn>
         </div>
-      </div>
+      </.dm_card>
     <% end %>
     
 <!-- Lighting Section -->
@@ -98,19 +121,19 @@
     <%= if length(lights) > 0 do %>
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <.icon name="hero-light-bulb" class="size-5 text-warning" />
-          <h2 class="text-xl font-bold tracking-tight">Lighting</h2>
-          <span class="badge badge-sm badge-ghost">{length(lights)}</span>
+          <.dm_mdi name="lightbulb-outline" class="size-5 text-warning" />
+          <h2 class="text-xl font-bold tracking-tight text-on-surface">Lighting</h2>
+          <.dm_badge variant="secondary" size="xs">{length(lights)}</.dm_badge>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <%= for device <- lights do %>
             <div class="relative group">
               <.link
                 navigate={~p"/devices/#{device.id}"}
-                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                class="absolute top-4 right-16 p-2 text-on-surface-variant hover:text-on-surface z-10"
                 title="Device Details"
               >
-                <.icon name="hero-cog-6-tooth" class="size-4" />
+                <.dm_mdi name="cog-outline" class="size-4" />
               </.link>
               <.light_control shadow={device} />
             </div>
@@ -124,19 +147,19 @@
     <%= if length(climates) > 0 do %>
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <.icon name="hero-sun" class="size-5 text-info" />
-          <h2 class="text-xl font-bold tracking-tight">Climate & Heating</h2>
-          <span class="badge badge-sm badge-ghost">{length(climates)}</span>
+          <.dm_mdi name="air-conditioner" class="size-5 text-info" />
+          <h2 class="text-xl font-bold tracking-tight text-on-surface">Climate & Heating</h2>
+          <.dm_badge variant="secondary" size="xs">{length(climates)}</.dm_badge>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <%= for device <- climates do %>
             <div class="relative group">
               <.link
                 navigate={~p"/devices/#{device.id}"}
-                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                class="absolute top-4 right-16 p-2 text-on-surface-variant hover:text-on-surface z-10"
                 title="Device Details"
               >
-                <.icon name="hero-cog-6-tooth" class="size-4" />
+                <.dm_mdi name="cog-outline" class="size-4" />
               </.link>
               <.ac_control shadow={device} />
             </div>
@@ -150,19 +173,19 @@
     <%= if length(switches) > 0 do %>
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <.icon name="hero-power" class="size-5 text-success" />
-          <h2 class="text-xl font-bold tracking-tight">Switches & Plugs</h2>
-          <span class="badge badge-sm badge-ghost">{length(switches)}</span>
+          <.dm_mdi name="power" class="size-5 text-success" />
+          <h2 class="text-xl font-bold tracking-tight text-on-surface">Switches & Plugs</h2>
+          <.dm_badge variant="secondary" size="xs">{length(switches)}</.dm_badge>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <%= for device <- switches do %>
             <div class="relative group">
               <.link
                 navigate={~p"/devices/#{device.id}"}
-                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                class="absolute top-4 right-16 p-2 text-on-surface-variant hover:text-on-surface z-10"
                 title="Device Details"
               >
-                <.icon name="hero-cog-6-tooth" class="size-4" />
+                <.dm_mdi name="cog-outline" class="size-4" />
               </.link>
               <.generic_switch shadow={device} />
             </div>
@@ -177,19 +200,19 @@
     <%= if length(others) > 0 do %>
       <section class="space-y-3">
         <div class="flex items-center gap-2">
-          <.icon name="hero-cpu-chip" class="size-5 text-primary" />
-          <h2 class="text-xl font-bold tracking-tight">Other Devices</h2>
-          <span class="badge badge-sm badge-ghost">{length(others)}</span>
+          <.dm_mdi name="chip" class="size-5 text-primary" />
+          <h2 class="text-xl font-bold tracking-tight text-on-surface">Other Devices</h2>
+          <.dm_badge variant="secondary" size="xs">{length(others)}</.dm_badge>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <%= for device <- others do %>
             <div class="relative group">
               <.link
                 navigate={~p"/devices/#{device.id}"}
-                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                class="absolute top-4 right-16 p-2 text-on-surface-variant hover:text-on-surface z-10"
                 title="Device Details"
               >
-                <.icon name="hero-cog-6-tooth" class="size-4" />
+                <.dm_mdi name="cog-outline" class="size-4" />
               </.link>
               <.generic_switch shadow={device} />
             </div>
@@ -202,30 +225,36 @@
 <!-- Add Device Modal -->
   <%= if @show_add_modal do %>
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-      <div class="bg-base-100 rounded-2xl shadow-2xl border border-base-200 w-full max-w-md p-6 space-y-5 animate-in fade-in zoom-in-95">
+      <.dm_card
+        variant="bordered"
+        class="w-full max-w-md p-6 space-y-5 bg-surface text-on-surface shadow-2xl"
+      >
         <div class="flex items-center justify-between">
-          <h3 class="text-lg font-bold">Add Smart Device</h3>
-          <button phx-click="close_add_modal" class="btn btn-sm btn-circle btn-ghost">
-            <.icon name="hero-x-mark" class="size-5" />
-          </button>
+          <h3 class="text-lg font-bold text-on-surface">Add Smart Device</h3>
+          <.dm_btn phx-click="close_add_modal" variant="ghost" size="sm" shape="circle">
+            <.dm_mdi name="close" class="size-5" />
+          </.dm_btn>
         </div>
 
         <.form for={@new_device_form} phx-submit="save_device" class="space-y-4">
           <div class="space-y-1">
-            <label class="text-xs font-semibold text-base-content/70">Device Name</label>
+            <label class="text-xs font-semibold text-on-surface-variant">Device Name</label>
             <input
               type="text"
               name="device[name]"
               required
               placeholder="Living Room Lamp"
-              class="input input-bordered w-full"
+              class="w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-2 text-sm text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1">
-              <label class="text-xs font-semibold text-base-content/70">Category</label>
-              <select name="device[type]" class="select select-bordered w-full">
+              <label class="text-xs font-semibold text-on-surface-variant">Category</label>
+              <select
+                name="device[type]"
+                class="w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-2 text-sm text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary"
+              >
                 <option value="light">Light</option>
                 <option value="climate">Climate (AC)</option>
                 <option value="switch">Switch / Plug</option>
@@ -233,8 +262,11 @@
             </div>
 
             <div class="space-y-1">
-              <label class="text-xs font-semibold text-base-content/70">Adapter</label>
-              <select name="device[adapter]" class="select select-bordered w-full">
+              <label class="text-xs font-semibold text-on-surface-variant">Adapter</label>
+              <select
+                name="device[adapter]"
+                class="w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-2 text-sm text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary"
+              >
                 <option value="Domex.Adapter.YeelightLan">Yeelight LAN (TCP 55443)</option>
                 <option value="Domex.Adapter.MiioDevice">Xiaomi miIO (UDP 54321)</option>
                 <option value="Domex.Adapter.MideaDevice">Midea AC (TCP 6444)</option>
@@ -244,47 +276,51 @@
 
           <div class="grid grid-cols-3 gap-3">
             <div class="col-span-2 space-y-1">
-              <label class="text-xs font-semibold text-base-content/70">Host IP / Address</label>
+              <label class="text-xs font-semibold text-on-surface-variant">
+                Host IP / Address
+              </label>
               <input
                 type="text"
                 name="device[host]"
                 required
                 placeholder="192.168.1.100"
-                class="input input-bordered w-full font-mono text-sm"
+                class="w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-2 text-sm font-mono text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary"
               />
             </div>
 
             <div class="space-y-1">
-              <label class="text-xs font-semibold text-base-content/70">Port</label>
+              <label class="text-xs font-semibold text-on-surface-variant">Port</label>
               <input
                 type="number"
                 name="device[port]"
                 placeholder="Default"
-                class="input input-bordered w-full font-mono text-sm"
+                class="w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-2 text-sm font-mono text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
           <div class="space-y-1">
-            <label class="text-xs font-semibold text-base-content/70">
+            <label class="text-xs font-semibold text-on-surface-variant">
               Token (for miIO / encrypted protocols)
             </label>
             <input
               type="text"
               name="device[token]"
               placeholder="32-char hex string (optional for Yeelight/Midea)"
-              class="input input-bordered w-full font-mono text-xs"
+              class="w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-2 text-xs font-mono text-on-surface focus:outline-hidden focus:ring-2 focus:ring-primary"
             />
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" phx-click="close_add_modal" class="btn btn-ghost">
+            <.dm_btn type="button" phx-click="close_add_modal" variant="ghost">
               Cancel
-            </button>
-            <button type="submit" class="btn btn-primary">Save & Connect</button>
+            </.dm_btn>
+            <.dm_btn type="submit" variant="primary">
+              Save & Connect
+            </.dm_btn>
           </div>
         </.form>
-      </div>
+      </.dm_card>
     </div>
   <% end %>
 </Layouts.app>
