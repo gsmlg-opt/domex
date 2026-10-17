@@ -1,0 +1,290 @@
+<Layouts.app flash={@flash}>
+  <div class="space-y-8 -mt-10">
+    <!-- Top Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
+      <div>
+        <h1 class="text-3xl font-black tracking-tight flex items-center gap-2">
+          <span>Domex</span>
+          <span class="badge badge-primary badge-sm">Local Hub</span>
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">
+          {map_size(@devices)} configured devices &bull; {Enum.count(
+            Map.values(@devices),
+            & &1.online?
+          )} online
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          phx-click="trigger_discovery"
+          class="btn btn-sm btn-outline gap-1.5 rounded-lg"
+          title="Scan local network for devices"
+        >
+          <.icon name="hero-magnifying-glass" class="size-4 motion-safe:animate-pulse" />
+          <span>Discover</span>
+        </button>
+
+        <button
+          phx-click="open_add_modal"
+          class="btn btn-sm btn-primary gap-1.5 rounded-lg shadow-sm"
+        >
+          <.icon name="hero-plus" class="size-4" />
+          <span>Add Device</span>
+        </button>
+      </div>
+    </div>
+    
+<!-- Discovered Devices Banner -->
+    <%= if map_size(@discovered) > 0 do %>
+      <div class="bg-primary/10 border border-primary/20 rounded-2xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 text-primary font-bold text-sm">
+            <.icon name="hero-sparkles" class="size-5" />
+            <span>Discovered {map_size(@discovered)} New Device(s) on Local Network</span>
+          </div>
+          <span class="text-xs text-base-content/50">Auto-detected via UDP broadcast</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <%= for {id, meta} <- @discovered do %>
+            <div class="flex items-center justify-between bg-base-100/80 rounded-xl p-3 border border-base-200 shadow-xs">
+              <div class="truncate mr-2">
+                <div class="font-semibold text-sm truncate">
+                  {meta[:name] || meta["name"] || id}
+                </div>
+                <div class="text-xs text-base-content/60 font-mono">
+                  {meta[:host] || meta["host"]}:{meta[:port] || meta["port"]}
+                </div>
+              </div>
+              <button
+                phx-click="add_discovered"
+                phx-value-id={id}
+                class="btn btn-xs btn-primary rounded-lg shrink-0"
+              >
+                Connect
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    
+<!-- Empty State -->
+    <%= if map_size(@devices) == 0 do %>
+      <div class="text-center py-16 px-4 bg-base-100 rounded-2xl border border-dashed border-base-300 space-y-4">
+        <div class="size-16 bg-base-200 rounded-full flex items-center justify-center mx-auto text-base-content/40">
+          <.icon name="hero-home" class="size-8" />
+        </div>
+        <div>
+          <h3 class="text-lg font-bold">No devices configured yet</h3>
+          <p class="text-sm text-base-content/60 max-w-sm mx-auto mt-1">
+            Scan your local network to discover Yeelight, Xiaomi miIO, and Midea appliances automatically, or add one manually.
+          </p>
+        </div>
+        <div class="flex justify-center gap-3 pt-2">
+          <button phx-click="trigger_discovery" class="btn btn-outline btn-sm rounded-lg">
+            Scan Network
+          </button>
+          <button phx-click="open_add_modal" class="btn btn-primary btn-sm rounded-lg">
+            Add Manually
+          </button>
+        </div>
+      </div>
+    <% end %>
+    
+<!-- Lighting Section -->
+    <% lights = Enum.filter(Map.values(@devices), &(&1.type == :light)) %>
+    <%= if length(lights) > 0 do %>
+      <section class="space-y-3">
+        <div class="flex items-center gap-2">
+          <.icon name="hero-light-bulb" class="size-5 text-warning" />
+          <h2 class="text-xl font-bold tracking-tight">Lighting</h2>
+          <span class="badge badge-sm badge-ghost">{length(lights)}</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <%= for device <- lights do %>
+            <div class="relative group">
+              <.link
+                navigate={~p"/devices/#{device.id}"}
+                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                title="Device Details"
+              >
+                <.icon name="hero-cog-6-tooth" class="size-4" />
+              </.link>
+              <.light_control shadow={device} />
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+    
+<!-- Climate Section -->
+    <% climates = Enum.filter(Map.values(@devices), &(&1.type == :climate)) %>
+    <%= if length(climates) > 0 do %>
+      <section class="space-y-3">
+        <div class="flex items-center gap-2">
+          <.icon name="hero-sun" class="size-5 text-info" />
+          <h2 class="text-xl font-bold tracking-tight">Climate & Heating</h2>
+          <span class="badge badge-sm badge-ghost">{length(climates)}</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <%= for device <- climates do %>
+            <div class="relative group">
+              <.link
+                navigate={~p"/devices/#{device.id}"}
+                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                title="Device Details"
+              >
+                <.icon name="hero-cog-6-tooth" class="size-4" />
+              </.link>
+              <.ac_control shadow={device} />
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+    
+<!-- Switches Section -->
+    <% switches = Enum.filter(Map.values(@devices), &(&1.type in [:switch, :sensor])) %>
+    <%= if length(switches) > 0 do %>
+      <section class="space-y-3">
+        <div class="flex items-center gap-2">
+          <.icon name="hero-power" class="size-5 text-success" />
+          <h2 class="text-xl font-bold tracking-tight">Switches & Plugs</h2>
+          <span class="badge badge-sm badge-ghost">{length(switches)}</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <%= for device <- switches do %>
+            <div class="relative group">
+              <.link
+                navigate={~p"/devices/#{device.id}"}
+                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                title="Device Details"
+              >
+                <.icon name="hero-cog-6-tooth" class="size-4" />
+              </.link>
+              <.generic_switch shadow={device} />
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+    
+<!-- Other Section -->
+    <% others =
+      Enum.filter(Map.values(@devices), &(&1.type not in [:light, :climate, :switch, :sensor])) %>
+    <%= if length(others) > 0 do %>
+      <section class="space-y-3">
+        <div class="flex items-center gap-2">
+          <.icon name="hero-cpu-chip" class="size-5 text-primary" />
+          <h2 class="text-xl font-bold tracking-tight">Other Devices</h2>
+          <span class="badge badge-sm badge-ghost">{length(others)}</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <%= for device <- others do %>
+            <div class="relative group">
+              <.link
+                navigate={~p"/devices/#{device.id}"}
+                class="absolute top-4 right-16 p-2 text-base-content/40 hover:text-base-content z-10"
+                title="Device Details"
+              >
+                <.icon name="hero-cog-6-tooth" class="size-4" />
+              </.link>
+              <.generic_switch shadow={device} />
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+  
+<!-- Add Device Modal -->
+  <%= if @show_add_modal do %>
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+      <div class="bg-base-100 rounded-2xl shadow-2xl border border-base-200 w-full max-w-md p-6 space-y-5 animate-in fade-in zoom-in-95">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold">Add Smart Device</h3>
+          <button phx-click="close_add_modal" class="btn btn-sm btn-circle btn-ghost">
+            <.icon name="hero-x-mark" class="size-5" />
+          </button>
+        </div>
+
+        <.form for={@new_device_form} phx-submit="save_device" class="space-y-4">
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-base-content/70">Device Name</label>
+            <input
+              type="text"
+              name="device[name]"
+              required
+              placeholder="Living Room Lamp"
+              class="input input-bordered w-full"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-semibold text-base-content/70">Category</label>
+              <select name="device[type]" class="select select-bordered w-full">
+                <option value="light">Light</option>
+                <option value="climate">Climate (AC)</option>
+                <option value="switch">Switch / Plug</option>
+              </select>
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-xs font-semibold text-base-content/70">Adapter</label>
+              <select name="device[adapter]" class="select select-bordered w-full">
+                <option value="Domex.Adapter.YeelightLan">Yeelight LAN (TCP 55443)</option>
+                <option value="Domex.Adapter.MiioDevice">Xiaomi miIO (UDP 54321)</option>
+                <option value="Domex.Adapter.MideaDevice">Midea AC (TCP 6444)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="col-span-2 space-y-1">
+              <label class="text-xs font-semibold text-base-content/70">Host IP / Address</label>
+              <input
+                type="text"
+                name="device[host]"
+                required
+                placeholder="192.168.1.100"
+                class="input input-bordered w-full font-mono text-sm"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-xs font-semibold text-base-content/70">Port</label>
+              <input
+                type="number"
+                name="device[port]"
+                placeholder="Default"
+                class="input input-bordered w-full font-mono text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-base-content/70">
+              Token (for miIO / encrypted protocols)
+            </label>
+            <input
+              type="text"
+              name="device[token]"
+              placeholder="32-char hex string (optional for Yeelight/Midea)"
+              class="input input-bordered w-full font-mono text-xs"
+            />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" phx-click="close_add_modal" class="btn btn-ghost">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save & Connect</button>
+          </div>
+        </.form>
+      </div>
+    </div>
+  <% end %>
+</Layouts.app>

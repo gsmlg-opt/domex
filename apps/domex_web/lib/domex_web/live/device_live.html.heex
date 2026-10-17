@@ -1,0 +1,129 @@
+<Layouts.app flash={@flash}>
+  <div class="space-y-6 -mt-10">
+    <!-- Breadcrumb & Navigation -->
+    <div class="flex items-center justify-between pb-3 border-b border-base-200">
+      <div class="flex items-center gap-2 text-sm">
+        <.link
+          navigate={~p"/"}
+          class="text-base-content/60 hover:text-primary flex items-center gap-1"
+        >
+          <.icon name="hero-arrow-left" class="size-4" />
+          <span>Dashboard</span>
+        </.link>
+        <span class="text-base-content/30">/</span>
+        <span class="font-bold text-base-content">{@shadow.name}</span>
+      </div>
+
+      <button
+        phx-click="delete_device"
+        phx-value-id={@shadow.id}
+        data-confirm="Are you sure you want to remove this device?"
+        class="btn btn-xs btn-outline btn-error gap-1 rounded-lg"
+      >
+        <.icon name="hero-trash" class="size-3.5" />
+        <span>Delete Device</span>
+      </button>
+    </div>
+    
+<!-- Active Device Control Component -->
+    <div>
+      <%= cond do %>
+        <% @shadow.type == :light -> %>
+          <.light_control shadow={@shadow} />
+        <% @shadow.type == :climate -> %>
+          <.ac_control shadow={@shadow} />
+        <% true -> %>
+          <.generic_switch shadow={@shadow} />
+      <% end %>
+    </div>
+    
+<!-- Connection & Diagnostic Info -->
+    <div class="card bg-base-100 border border-base-200 rounded-xl p-5 shadow-xs space-y-4">
+      <h3 class="font-bold text-sm text-base-content/80 flex items-center gap-1.5 uppercase tracking-wider">
+        <.icon name="hero-information-circle" class="size-4 text-info" />
+        <span>Device Information</span>
+      </h3>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+        <div>
+          <span class="text-xs text-base-content/60 block">Status</span>
+          <span class={[
+            "inline-flex items-center gap-1 font-semibold text-xs mt-0.5 px-2 py-0.5 rounded-full",
+            if(@shadow.online?, do: "bg-success/15 text-success", else: "bg-error/15 text-error")
+          ]}>
+            <span class={[
+              "size-1.5 rounded-full",
+              if(@shadow.online?, do: "bg-success", else: "bg-error")
+            ]}>
+            </span>
+            {if @shadow.online?, do: "Online", else: "Offline"}
+          </span>
+        </div>
+
+        <div>
+          <span class="text-xs text-base-content/60 block">Network Address</span>
+          <span class="font-mono text-xs font-medium mt-0.5 block truncate">
+            {@shadow.host}:{@shadow.port}
+          </span>
+        </div>
+
+        <div>
+          <span class="text-xs text-base-content/60 block">Adapter Driver</span>
+          <span class="font-mono text-xs font-medium mt-0.5 block truncate">
+            {to_string(@shadow.adapter)}
+          </span>
+        </div>
+
+        <div>
+          <span class="text-xs text-base-content/60 block">Category</span>
+          <span class="capitalize text-xs font-medium mt-0.5 block">{@shadow.type}</span>
+        </div>
+
+        <div>
+          <span class="text-xs text-base-content/60 block">Device ID</span>
+          <span class="font-mono text-xs text-base-content/70 mt-0.5 block truncate">
+            {@shadow.id}
+          </span>
+        </div>
+
+        <div>
+          <span class="text-xs text-base-content/60 block">Last Update</span>
+          <span class="text-xs text-base-content/70 mt-0.5 block">
+            {if @shadow.updated_at,
+              do: Calendar.strftime(@shadow.updated_at, "%H:%M:%S UTC"),
+              else: "Never"}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+<!-- Raw Properties Inspector -->
+    <%= if map_size(@shadow.properties) > 0 do %>
+      <div class="card bg-base-100 border border-base-200 rounded-xl p-5 shadow-xs space-y-3">
+        <h3 class="font-bold text-sm text-base-content/80 flex items-center gap-1.5 uppercase tracking-wider">
+          <.icon name="hero-code-bracket" class="size-4 text-primary" />
+          <span>Raw Device Properties</span>
+        </h3>
+
+        <div class="overflow-x-auto">
+          <table class="table table-xs w-full font-mono">
+            <thead>
+              <tr class="text-base-content/60">
+                <th>Property</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= for {k, v} <- @shadow.properties do %>
+                <tr class="hover">
+                  <td class="font-bold text-primary">{to_string(k)}</td>
+                  <td class="text-base-content/80">{inspect(v)}</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</Layouts.app>
