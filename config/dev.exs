@@ -3,7 +3,7 @@ import Config
 # For development, we disable any cache and enable
 # debugging and code reloading.
 config :domex_web, DomexWeb.Endpoint,
-  http: [ip: {127, 0, 0, 1}],
+  http: [ip: {0, 0, 0, 0, 0, 0, 0, 0}],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

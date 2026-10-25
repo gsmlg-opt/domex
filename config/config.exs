@@ -5,8 +5,10 @@ config :domex_web,
 
 # Configure the endpoint
 config :domex_web, DomexWeb.Endpoint,
-  url: [host: "localhost"],
-  adapter: Bandit.PhoenixAdapter,
+  url: [host: "domex.local"],
+  adapter: Gaoxy.PhoenixAdapter,
+  # Hologram's SSE responses stay open beyond the ordinary request deadline.
+  http: [http_limits: %{stream_timeout: :infinity}],
   render_errors: [
     formats: [html: DomexWeb.ErrorHTML, json: DomexWeb.ErrorJSON],
     layout: false

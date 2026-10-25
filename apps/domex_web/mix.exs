@@ -9,12 +9,12 @@ defmodule DomexWeb.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.15",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers() ++ [:hologram],
       listeners: [Phoenix.CodeReloader]
     ]
   end
@@ -35,18 +35,21 @@ defmodule DomexWeb.MixProject do
       {:phoenix, "~> 1.8.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.1.0"},
+      {:phoenix_live_view, "~> 1.2.13"},
       {:lazy_html, ">= 0.1.0"},
-      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:phoenix_live_dashboard, "~> 0.9.1"},
       {:phoenix_duskmoon, "~> 10.0"},
+      {:duskmoon_hologram, "~> 10.0.5"},
       {:duskmoon_bundler_runtime, "~> 10.0"},
       {:duskmoon_bundler, "~> 10.0", runtime: Mix.env() != :prod},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
       {:jason, "~> 1.2"},
-      {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:dns_cluster, "~> 0.3.1"},
+      {:gaoxy_http, "~> 0.12.2"},
+      # Phoenix requires Gaoxy's WebSockAdapter distribution for WebSocket upgrades.
+      {:websock_adapter, "~> 0.12.2", hex: :gaoxy_websock_adapter, override: true}
     ]
   end
 

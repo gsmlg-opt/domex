@@ -29,6 +29,14 @@ defmodule DomexWeb.Layouts do
         </div>
 
         <div class="appbar-trailing flex items-center gap-3 ml-auto">
+          <a
+            :if={Hologram.enabled?()}
+            id="nav-hologram"
+            href="/hologram"
+            class="rounded-lg px-3 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-on-primary/10"
+          >
+            Hub overview
+          </a>
           <.dm_theme_switcher />
         </div>
       </header>
