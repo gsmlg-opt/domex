@@ -1,12 +1,12 @@
 # Domex
 
-Domex is a local smart home management and control platform built with Elixir/OTP and Phoenix LiveView. It operates with zero external protocol dependencies, leveraging pure binary pattern matching, Sans-I/O codecs, dynamic per-device supervision, real-time shadow synchronization over `Phoenix.PubSub`, and an interactive LiveView dashboard.
+Domex is a local smart home management and control platform built with Elixir/OTP and Phoenix LiveView. Its LAN device protocols use pure binary pattern matching and Sans-I/O codecs with zero external protocol dependencies, alongside dynamic per-device supervision, real-time shadow synchronization over `Phoenix.PubSub`, and an interactive LiveView dashboard. Standalone system sensors report through MQTT using Tortoise311.
 
 ---
 
 ## Architecture (Umbrella Structure)
 
-Domex is organized as an Elixir umbrella project consisting of three decoupled applications:
+Domex is organized as an Elixir umbrella project consisting of three decoupled applications, with a separately released sensor project under `sensors/domex_sensor`:
 
 ```text
 domex/
@@ -32,6 +32,11 @@ domex/
 │       ├── DashboardLive (Real-time device grid & manual device modal)
 │       ├── DeviceLive (Detailed diagnostics & interactive controls)
 │       └── Live components (LightControl, AcControl, GenericSwitch)
+└── sensors/
+    └── domex_sensor/         # Independent Mix project and OTP release for macOS/Linux
+        ├── macOS native CPU, memory, disk, network and GPU collectors
+        ├── Linux procfs collector
+        └── MQTT telemetry and retained availability
 ```
 
 ---
@@ -68,6 +73,27 @@ domex/
 
 ---
 
+## System Sensors
+
+The standalone [sensor project](sensors/domex_sensor/README.md) runs on macOS
+(Apple Silicon and Intel) and Linux. It shares only the pure protocol app with
+the hub and does not include Phoenix in its release.
+
+Point the hub and sensors at the same MQTT broker, then open `/sensors`:
+
+```sh
+# From the repository root
+DOMEX_MQTT_HOST=broker.local mix phx.server
+
+# From sensors/domex_sensor
+mix deps.get
+DOMEX_MQTT_HOST=broker.local DOMEX_SENSOR_ID=desk-mac mix run --no-halt
+```
+
+Build an independent device release from `sensors/domex_sensor` with
+`MIX_ENV=prod mix release domex_sensor`. See the sensor README for configuration
+and macOS launchd / Linux systemd deployment templates.
+
 ## Code Quality & Testing
 
 Run all test suites across the umbrella:
@@ -79,4 +105,15 @@ Run precommit verification (formatting, unused deps check, compilation with warn
 ```bash
 mix precommit
 ```
+
+The standalone sensor has its own checks; run `mix precommit` from
+`sensors/domex_sensor` as well.
+
+<!-- TODO(upstream): duskmoon-dev/duskmoon-bundler#9 -->
+Web asset generation on GNU Linux with glibc older than 2.43 is currently blocked
+by the published DuskMoon Vize 10.0.5 native artifact
+([upstream issue](https://github.com/duskmoon-dev/duskmoon-bundler/issues/9)).
+The sensor release and both projects' `mix precommit` checks run independently
+of that asset build. Resume asset verification after a compatible upstream
+artifact is published and the dependency is updated.
 

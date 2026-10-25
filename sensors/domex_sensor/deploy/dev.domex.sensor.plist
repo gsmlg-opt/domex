@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>dev.domex.sensor</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Users/you/domex_sensor/bin/domex_sensor</string>
+      <string>start</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/you/domex_sensor</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>DOMEX_MQTT_HOST</key>
+      <string>broker.local</string>
+      <key>DOMEX_SENSOR_ID</key>
+      <string>desk-mac</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>StandardOutPath</key>
+    <string>/Users/you/Library/Logs/domex-sensor.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/you/Library/Logs/domex-sensor-error.log</string>
+  </dict>
+</plist>

@@ -29,6 +29,13 @@ defmodule DomexWeb.Layouts do
         </div>
 
         <div class="appbar-trailing flex items-center gap-3 ml-auto">
+          <.link
+            id="nav-sensors"
+            navigate={~p"/sensors"}
+            class="rounded-lg px-3 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-on-primary/10"
+          >
+            System sensors
+          </.link>
           <a
             :if={Hologram.enabled?()}
             id="nav-hologram"

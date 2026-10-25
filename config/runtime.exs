@@ -1,5 +1,18 @@
 import Config
 
+if mqtt_host = System.get_env("DOMEX_MQTT_HOST") do
+  config :domex_core, :sensor_mqtt,
+    enabled: true,
+    host: mqtt_host,
+    port: String.to_integer(System.get_env("DOMEX_MQTT_PORT", "1883")),
+    tls: System.get_env("DOMEX_MQTT_TLS", "false") in ["true", "1"],
+    cacertfile: System.get_env("DOMEX_MQTT_CA_CERT"),
+    user_name: System.get_env("DOMEX_MQTT_USERNAME"),
+    password: System.get_env("DOMEX_MQTT_PASSWORD"),
+    client_id: System.get_env("DOMEX_MQTT_CLIENT_ID", "domex-hub"),
+    prefix: System.get_env("DOMEX_MQTT_PREFIX", "domex/sensors")
+end
+
 if System.get_env("PHX_SERVER") do
   config :domex_web, DomexWeb.Endpoint, server: true
 end

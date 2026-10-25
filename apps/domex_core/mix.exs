@@ -25,7 +25,8 @@ defmodule DomexCore.MixProject do
   defp deps do
     [
       {:domex_protocol, in_umbrella: true},
-      {:phoenix_pubsub, "~> 2.1"}
+      {:phoenix_pubsub, "~> 2.1"},
+      {:tortoise311, "~> 0.12.1"}
     ]
   end
 end

@@ -10,7 +10,8 @@ defmodule Domex.Application do
       {Registry, keys: :unique, name: Domex.Device.Registry},
       Domex.Device.DynamicSupervisor,
       Domex.ConfigStore,
-      Domex.Discovery.Supervisor
+      Domex.Discovery.Supervisor,
+      {Domex.Sensor.Supervisor, Application.get_env(:domex_core, :sensor_mqtt, [])}
     ]
 
     opts = [strategy: :one_for_one, name: Domex.Supervisor]

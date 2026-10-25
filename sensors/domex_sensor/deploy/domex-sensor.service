@@ -1,0 +1,18 @@
+[Unit]
+Description=Domex system sensor
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=domex-sensor
+WorkingDirectory=/opt/domex_sensor
+EnvironmentFile=/etc/domex-sensor.env
+ExecStart=/opt/domex_sensor/bin/domex_sensor start
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

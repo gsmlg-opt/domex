@@ -18,6 +18,7 @@ defmodule DomexWeb.Router do
     pipe_through :browser
 
     live "/", DashboardLive, :index
+    live "/sensors", SensorsLive, :index
     live "/devices/:id", DeviceLive, :show
   end
 
