@@ -184,7 +184,7 @@ defmodule Domex.Protocol.Miio do
 
     if pad_len > 0 and pad_len <= 16 do
       data_len = byte_size(data) - pad_len
-      <<unpadded::binary-size(data_len), padding::binary>> = data
+      <<unpadded::binary-size(^data_len), padding::binary>> = data
 
       if padding == :binary.copy(<<pad_len>>, pad_len) do
         {:ok, unpadded}

@@ -27,8 +27,8 @@
         <span>Delete Device</span>
       </.dm_btn>
     </div>
-    
-<!-- Active Device Control Component -->
+
+    <!-- Active Device Control Component -->
     <div>
       <%= cond do %>
         <% @shadow.type == :light -> %>
@@ -39,8 +39,8 @@
           <.generic_switch shadow={@shadow} />
       <% end %>
     </div>
-    
-<!-- Connection & Diagnostic Info -->
+
+    <!-- Connection & Diagnostic Info -->
     <.dm_card variant="bordered" class="p-5 space-y-4">
       <h3 class="font-bold text-sm text-on-surface flex items-center gap-1.5 uppercase tracking-wider">
         <.dm_mdi name="information-outline" class="size-4 text-info" />
@@ -99,8 +99,8 @@
         </div>
       </div>
     </.dm_card>
-    
-<!-- Raw Properties Inspector -->
+
+    <!-- Raw Properties Inspector -->
     <%= if map_size(@shadow.properties) > 0 do %>
       <.dm_card variant="bordered" class="p-5 space-y-3">
         <h3 class="font-bold text-sm text-on-surface flex items-center gap-1.5 uppercase tracking-wider">

@@ -72,8 +72,8 @@ defmodule DomexWeb.Components.AcControl do
           {if @shadow.power, do: "ON", else: "OFF"}
         </.dm_btn>
       </div>
-      
-    <!-- Temperature Dial / Controls -->
+
+      <!-- Temperature Dial / Controls -->
       <div class="flex items-center justify-between bg-surface-container-high rounded-2xl p-4">
         <!-- Decrement -->
         <.dm_btn
@@ -89,8 +89,8 @@ defmodule DomexWeb.Components.AcControl do
         >
           <.dm_mdi name="minus" class="size-5" />
         </.dm_btn>
-        
-    <!-- Temperature Display -->
+
+        <!-- Temperature Display -->
         <div class="text-center">
           <div class="text-4xl font-black tracking-tight text-on-surface">
             {format_temp(@shadow.ac_target_temp || 24.0)}<span class="text-2xl font-normal text-on-surface-variant">°C</span>
@@ -102,8 +102,8 @@ defmodule DomexWeb.Components.AcControl do
             </div>
           <% end %>
         </div>
-        
-    <!-- Increment -->
+
+        <!-- Increment -->
         <.dm_btn
           id={"btn-temp-inc-#{@shadow.id}"}
           phx-click="change_temp"
@@ -118,8 +118,8 @@ defmodule DomexWeb.Components.AcControl do
           <.dm_mdi name="plus" class="size-5" />
         </.dm_btn>
       </div>
-      
-    <!-- Mode Selector -->
+
+      <!-- Mode Selector -->
       <div class="space-y-1.5">
         <label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Operating Mode
@@ -147,8 +147,8 @@ defmodule DomexWeb.Components.AcControl do
           <% end %>
         </div>
       </div>
-      
-    <!-- Fan Speed Selector -->
+
+      <!-- Fan Speed Selector -->
       <div class="space-y-1.5">
         <label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Fan Speed
@@ -175,8 +175,8 @@ defmodule DomexWeb.Components.AcControl do
           <% end %>
         </div>
       </div>
-      
-    <!-- Swing Toggle -->
+
+      <!-- Swing Toggle -->
       <div class="pt-2 border-t border-outline-variant flex items-center justify-between">
         <span class="text-sm font-medium text-on-surface-variant">Vertical Air Swing</span>
         <.dm_btn
@@ -195,7 +195,6 @@ defmodule DomexWeb.Components.AcControl do
     """
   end
 
-  defp format_temp(nil), do: "24.0"
   defp format_temp(temp) when is_integer(temp), do: "#{temp}.0"
   defp format_temp(temp) when is_float(temp), do: :erlang.float_to_binary(temp, decimals: 1)
 end

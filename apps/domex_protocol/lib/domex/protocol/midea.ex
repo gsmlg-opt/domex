@@ -71,7 +71,7 @@ defmodule Domex.Protocol.Midea do
         {:error, :incomplete}
 
       true ->
-        <<frame_bytes::binary-size(total_len), _remaining::binary>> = data
+        <<frame_bytes::binary-size(^total_len), _remaining::binary>> = data
 
         if verify_checksum(frame_bytes) do
           {:ok, :appliance, total_len, rest}
@@ -102,7 +102,7 @@ defmodule Domex.Protocol.Midea do
   def verify_checksum(<<_header::8, body_and_checksum::binary>>)
       when byte_size(body_and_checksum) >= 2 do
     body_len = byte_size(body_and_checksum) - 1
-    <<body::binary-size(body_len), expected_checksum::8>> = body_and_checksum
+    <<body::binary-size(^body_len), expected_checksum::8>> = body_and_checksum
     checksum(body) == expected_checksum
   end
 
@@ -139,7 +139,7 @@ defmodule Domex.Protocol.Midea do
     if byte_size(payload_and_checksum) < payload_len + 1 do
       {:error, :incomplete_payload}
     else
-      <<payload::binary-size(payload_len), _checksum::8, _rest::binary>> = payload_and_checksum
+      <<payload::binary-size(^payload_len), _checksum::8, _rest::binary>> = payload_and_checksum
 
       parsed = %{
         appliance_type: appliance_type,

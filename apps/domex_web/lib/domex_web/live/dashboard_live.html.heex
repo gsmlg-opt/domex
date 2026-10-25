@@ -40,8 +40,8 @@
         </.dm_btn>
       </div>
     </div>
-    
-<!-- Quick Stats Grid -->
+
+    <!-- Quick Stats Grid -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <.dm_stat title="Total Devices" value={to_string(map_size(@devices))} />
       <.dm_stat
@@ -54,8 +54,8 @@
       />
       <.dm_stat title="Discovered" value={to_string(map_size(@discovered))} />
     </div>
-    
-<!-- Discovered Devices Banner -->
+
+    <!-- Discovered Devices Banner -->
     <%= if map_size(@discovered) > 0 do %>
       <.dm_card variant="bordered" class="bg-primary/10 border-primary/30 p-4 space-y-3">
         <div class="flex items-center justify-between">
@@ -92,8 +92,8 @@
         </div>
       </.dm_card>
     <% end %>
-    
-<!-- Empty State -->
+
+    <!-- Empty State -->
     <%= if map_size(@devices) == 0 do %>
       <.dm_card
         variant="bordered"
@@ -118,8 +118,8 @@
         </div>
       </.dm_card>
     <% end %>
-    
-<!-- Lighting Section -->
+
+    <!-- Lighting Section -->
     <% lights = Enum.filter(Map.values(@devices), &(&1.type == :light)) %>
     <%= if length(lights) > 0 do %>
       <section class="space-y-3">
@@ -144,8 +144,8 @@
         </div>
       </section>
     <% end %>
-    
-<!-- Climate Section -->
+
+    <!-- Climate Section -->
     <% climates = Enum.filter(Map.values(@devices), &(&1.type == :climate)) %>
     <%= if length(climates) > 0 do %>
       <section class="space-y-3">
@@ -170,8 +170,8 @@
         </div>
       </section>
     <% end %>
-    
-<!-- Switches Section -->
+
+    <!-- Switches Section -->
     <% switches = Enum.filter(Map.values(@devices), &(&1.type in [:switch, :sensor])) %>
     <%= if length(switches) > 0 do %>
       <section class="space-y-3">
@@ -196,8 +196,8 @@
         </div>
       </section>
     <% end %>
-    
-<!-- Other Section -->
+
+    <!-- Other Section -->
     <% others =
       Enum.filter(Map.values(@devices), &(&1.type not in [:light, :climate, :switch, :sensor])) %>
     <%= if length(others) > 0 do %>
@@ -224,8 +224,8 @@
       </section>
     <% end %>
   </div>
-  
-<!-- Add Device Modal -->
+
+  <!-- Add Device Modal -->
   <%= if @show_add_modal do %>
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
       <.dm_card

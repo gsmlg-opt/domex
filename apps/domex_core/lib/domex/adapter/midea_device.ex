@@ -106,12 +106,12 @@ defmodule Domex.Adapter.MideaDevice do
   defp extract_frames(buffer, acc) do
     case Midea.validate_frame(buffer) do
       {:ok, :appliance, frame_len, _rest} ->
-        <<frame::binary-size(frame_len), remaining::binary>> = buffer
+        <<frame::binary-size(^frame_len), remaining::binary>> = buffer
         extract_frames(remaining, [frame | acc])
 
       {:ok, type, packet_len, _rest} when type in [:v2, :v3] ->
         # For v2/v3 outer packet, if it encapsulates 0xAA, unpack or advance
-        <<_outer::binary-size(packet_len), remaining::binary>> = buffer
+        <<_outer::binary-size(^packet_len), remaining::binary>> = buffer
         extract_frames(remaining, acc)
 
       {:error, :incomplete} ->

@@ -56,7 +56,7 @@ defmodule Domex.Discovery.SsdpListener do
           type: :light,
           adapter: Domex.Adapter.YeelightLan,
           host: host,
-          port: ad.port || 55443,
+          port: ad.port,
           metadata: ad
         }
 

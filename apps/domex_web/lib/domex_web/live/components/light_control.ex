@@ -54,8 +54,8 @@ defmodule DomexWeb.Components.LightControl do
           {if @shadow.power, do: "ON", else: "OFF"}
         </.dm_btn>
       </div>
-      
-    <!-- Brightness Slider -->
+
+      <!-- Brightness Slider -->
       <div class="space-y-2">
         <div class="flex justify-between items-center text-sm font-medium">
           <span class="flex items-center gap-1.5 text-on-surface-variant">
@@ -78,8 +78,8 @@ defmodule DomexWeb.Components.LightControl do
           />
         </form>
       </div>
-      
-    <!-- Color Temperature Slider -->
+
+      <!-- Color Temperature Slider -->
       <div class="space-y-2">
         <div class="flex justify-between items-center text-sm font-medium">
           <span class="flex items-center gap-1.5 text-on-surface-variant">
@@ -107,8 +107,8 @@ defmodule DomexWeb.Components.LightControl do
           <span>Cool (6500K)</span>
         </div>
       </div>
-      
-    <!-- RGB Color Picker -->
+
+      <!-- RGB Color Picker -->
       <div class="pt-2 border-t border-outline-variant flex items-center justify-between">
         <span class="text-sm font-medium text-on-surface-variant flex items-center gap-1.5">
           <.dm_mdi name="palette" class="size-4" /> Accent Color

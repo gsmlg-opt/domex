@@ -43,7 +43,7 @@ defmodule Domex.Adapter.MiioDevice do
         host: host,
         port: port,
         token: token,
-        did: did || 0,
+        did: did,
         stamp: 0,
         stamp_synced_at: System.monotonic_time(:second),
         req_id: 1,
