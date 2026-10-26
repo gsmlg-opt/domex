@@ -19,7 +19,10 @@ defmodule Domex.Umbrella.MixProject do
   end
 
   defp deps do
-    []
+    [
+      # Apply the existing Gaoxy adapter override across all umbrella dependencies.
+      {:websock_adapter, "~> 0.12.2", hex: :gaoxy_websock_adapter, override: true}
+    ]
   end
 
   defp aliases do

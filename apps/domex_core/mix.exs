@@ -9,7 +9,7 @@ defmodule DomexCore.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.15",
+      elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -26,6 +26,8 @@ defmodule DomexCore.MixProject do
     [
       {:domex_protocol, in_umbrella: true},
       {:phoenix_pubsub, "~> 2.1"},
+      {:mqttx, "~> 0.12.0"},
+      {:thousand_island, "~> 1.4"},
       {:tortoise311, "~> 0.12.1"}
     ]
   end

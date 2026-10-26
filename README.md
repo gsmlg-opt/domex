@@ -1,6 +1,6 @@
 # Domex
 
-Domex is a local smart home management and control platform built with Elixir/OTP and Phoenix LiveView. Its LAN device protocols use pure binary pattern matching and Sans-I/O codecs with zero external protocol dependencies, alongside dynamic per-device supervision, real-time shadow synchronization over `Phoenix.PubSub`, and an interactive LiveView dashboard. Standalone system sensors report through MQTT using Tortoise311.
+Domex is a local smart home management and control platform built with Elixir/OTP and Phoenix LiveView. Its LAN device protocols use pure binary pattern matching and Sans-I/O codecs with zero external protocol dependencies, alongside dynamic per-device supervision, real-time shadow synchronization over `Phoenix.PubSub`, and an interactive LiveView dashboard. Standalone system sensors use Tortoise311 to report to the hub's embedded MqttX broker.
 
 ---
 
@@ -69,7 +69,7 @@ domex/
    iex -S mix phx.server
    ```
 
-4. Open [http://localhost:4000](http://localhost:4000) in your browser.
+4. Open [http://localhost:4066](http://localhost:4066) in your browser.
 
 ---
 
@@ -79,16 +79,48 @@ The standalone [sensor project](sensors/domex_sensor/README.md) runs on macOS
 (Apple Silicon and Intel) and Linux. It shares only the pure protocol app with
 the hub and does not include Phoenix in its release.
 
-Point the hub and sensors at the same MQTT broker, then open `/sensors`:
+The hub starts an embedded MqttX broker on TCP port 1883 by default. Start
+Domex, point sensors at the hub's hostname or LAN IP, then open
+[http://localhost:4066/sensors](http://localhost:4066/sensors):
 
 ```sh
 # From the repository root
-DOMEX_MQTT_HOST=broker.local mix phx.server
+mix phx.server
 
 # From sensors/domex_sensor
 mix deps.get
-DOMEX_MQTT_HOST=broker.local DOMEX_SENSOR_ID=desk-mac mix run --no-halt
+DOMEX_MQTT_HOST=domex.local DOMEX_SENSOR_ID=desk-mac mix run --no-halt
 ```
+
+No external broker or manual sensor registration is required. Use `localhost`
+instead of `domex.local` when the sensor runs on the same machine as the hub.
+Set `DOMEX_MQTT_PORT` on both sides to use another port.
+
+Hub MQTT configuration:
+
+| Environment variable | Default | Purpose |
+| --- | --- | --- |
+| `DOMEX_MQTT_MODE` | `embedded`, or `external` when `DOMEX_MQTT_HOST` is set | `embedded`, `external` or `disabled`; tests default to `disabled` |
+| `DOMEX_MQTT_BIND` | `0.0.0.0` | Embedded broker's listening IP |
+| `DOMEX_MQTT_PORT` | `1883` | Embedded listening port or external broker port |
+| `DOMEX_MQTT_PREFIX` | `domex/sensors` | Topic prefix shared with sensors |
+| `DOMEX_MQTT_USERNAME` / `DOMEX_MQTT_PASSWORD` | Unset | Set both to require credentials on the embedded broker; also used in external mode |
+| `DOMEX_MQTT_TLS` | `false` | Enable TLS; set the port explicitly, usually `8883` |
+| `DOMEX_MQTT_CERT_FILE` / `DOMEX_MQTT_KEY_FILE` | Unset | Server certificate and private key paths, required for embedded TLS |
+| `DOMEX_MQTT_HOST` | Unset | External broker hostname; enables external mode unless mode is explicitly set |
+| `DOMEX_MQTT_CA_CERT` | OS trust store | CA path for the hub's external broker connection |
+| `DOMEX_MQTT_CLIENT_ID` | `domex-hub` | Hub client ID in external mode |
+
+The embedded broker accepts validated sensor messages in the configured topic
+namespace. Retained messages and sessions are kept in memory and do not survive
+a BEAM restart; connected sensors reconnect and republish their latest status.
+For an existing external broker, keep using
+`DOMEX_MQTT_HOST=broker.local mix phx.server` and point sensors at that broker.
+
+During TLS verification, MqttX 0.12.0 logged a `KeyError` for `:connected` when
+cleaning up a connection rejected before the TLS handshake completed. TCP and
+TLS connections with a CA-signed server certificate both passed end-to-end
+sensor checks; the failed-handshake cleanup remains an upstream limitation.
 
 Build an independent device release from `sensors/domex_sensor` with
 `MIX_ENV=prod mix release domex_sensor`. See the sensor README for configuration

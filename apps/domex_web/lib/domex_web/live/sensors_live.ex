@@ -52,7 +52,7 @@ defmodule DomexWeb.SensorsLive do
             </p>
             <h2 class="mt-3 text-xl font-semibold">Connect your first computer</h2>
             <p class="mx-auto mt-3 max-w-md text-sm leading-6 text-on-surface-variant">
-              Start a Domex sensor on your Mac or Linux device using the same MQTT broker as this hub. Its system status will appear here automatically.
+              Start a Domex sensor on your Mac or Linux device and point its MQTT host to this hub. Its system status will appear here automatically.
             </p>
           </div>
           <div :for={{dom_id, sensor} <- @streams.sensors} id={dom_id}>

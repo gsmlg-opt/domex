@@ -27,23 +27,30 @@ From this directory, with Elixir 1.18+ and Erlang/OTP 27+ installed:
 
 ```sh
 mix deps.get
-DOMEX_MQTT_HOST=broker.local DOMEX_SENSOR_ID=desk-mac mix run --no-halt
+DOMEX_MQTT_HOST=domex.local DOMEX_SENSOR_ID=desk-mac mix run --no-halt
 ```
 
 Use a stable, unique sensor ID for each device. The default is derived from the
-hostname. Sensors and the hub connect as clients to an external MQTT 3.1.1 broker
-(for example Mosquitto or EMQX).
-
-Start the hub from the repository root with the same broker and topic prefix:
+hostname. Start the hub from the repository root:
 
 ```sh
-DOMEX_MQTT_HOST=broker.local mix phx.server
+mix phx.server
 ```
 
-Open `/sensors` in the hub. Sensors appear automatically; no manual device entry
-is required. The hub keeps 60 distinct received samples per sensor, marks
+The hub starts its embedded MqttX broker on port 1883. Replace `domex.local`
+with the hub's hostname or LAN IP; use `localhost` when running both projects
+on the same machine. No separate broker is needed. Set `DOMEX_MQTT_PORT` and
+`DOMEX_MQTT_PREFIX` identically on the hub and sensors if changing the defaults.
+
+Open `http://localhost:4066/sensors` on the hub. Sensors appear automatically;
+no manual device entry is required. The hub keeps 60 distinct received samples per sensor, marks
 disconnected sensors offline, and expires availability after 60 seconds without
-telemetry. MQTT ingestion stays disabled on the hub unless `DOMEX_MQTT_HOST` is set.
+telemetry.
+
+For an external MQTT 3.1.1 broker, start the hub with
+`DOMEX_MQTT_HOST=broker.local mix phx.server` and use that same broker hostname
+on sensors. Hub-only `DOMEX_MQTT_MODE=embedded|external|disabled` explicitly
+selects the mode. The standalone sensor always runs as a client.
 
 ## Runtime configuration
 
@@ -51,7 +58,7 @@ telemetry. MQTT ingestion stays disabled on the hub unless `DOMEX_MQTT_HOST` is 
 | --- | --- | --- |
 | `DOMEX_SENSOR_ID` | `sensor-<hostname>` | Stable topic identifier; 1-128 letters, digits, dots, underscores or hyphens, starting with a letter or digit |
 | `DOMEX_SENSOR_NAME` | Hostname | Display name |
-| `DOMEX_MQTT_HOST` | `localhost` | Broker hostname |
+| `DOMEX_MQTT_HOST` | `localhost` | Domex hub hostname/IP, or external broker hostname |
 | `DOMEX_MQTT_PORT` | `1883` | Broker port; set `8883` explicitly for the usual TLS port |
 | `DOMEX_MQTT_USERNAME` | Unset | Optional broker username |
 | `DOMEX_MQTT_PASSWORD` | Unset | Optional broker password |
@@ -60,8 +67,11 @@ telemetry. MQTT ingestion stays disabled on the hub unless `DOMEX_MQTT_HOST` is 
 | `DOMEX_MQTT_PREFIX` | `domex/sensors` | Topic namespace shared with the hub |
 | `DOMEX_SENSOR_PUBLISH_INTERVAL_MS` | `1000` | Publish interval, 250-30000 ms; collection remains once per second |
 
-Broker variables are also supported by the hub. Set `DOMEX_MQTT_CLIENT_ID` on
-the hub if multiple hub instances connect to one broker. Sensor client IDs are
+Broker variables are also supported by the hub. When using embedded broker
+authentication, set the same username/password on sensors. Embedded TLS also
+requires `DOMEX_MQTT_CERT_FILE` and `DOMEX_MQTT_KEY_FILE` on the hub; sensors use
+`DOMEX_MQTT_CA_CERT` for a private CA. Set `DOMEX_MQTT_CLIENT_ID` on the hub if
+multiple hub instances connect to one external broker. Sensor client IDs are
 derived from `DOMEX_SENSOR_ID`.
 
 ## Standalone release
@@ -84,7 +94,7 @@ Elixir. Linux uses procfs and needs no native probe compilation.
 Copy `_build/prod/rel/domex_sensor` to the device, then run:
 
 ```sh
-DOMEX_MQTT_HOST=broker.local DOMEX_SENSOR_ID=desk-mac ./bin/domex_sensor start
+DOMEX_MQTT_HOST=domex.local DOMEX_SENSOR_ID=desk-mac ./bin/domex_sensor start
 ```
 
 The release bundles ERTS, needs compatible OS libraries such as OpenSSL, and has
