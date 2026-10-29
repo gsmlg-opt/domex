@@ -32,24 +32,24 @@ defmodule DomexWeb.MixProject do
   defp deps do
     [
       {:domex_core, in_umbrella: true},
-      {:phoenix, "~> 1.8.5"},
+      {:phoenix, "~> 1.8"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.2.13"},
+      {:phoenix_live_view, "~> 1.2"},
       {:lazy_html, ">= 0.1.0"},
-      {:phoenix_live_dashboard, "~> 0.9.1"},
+      {:phoenix_live_dashboard, "~> 0.9"},
       {:phoenix_duskmoon, "~> 10.0"},
-      {:duskmoon_hologram, "~> 10.0.5"},
+      {:duskmoon_hologram, "~> 10.0"},
       {:duskmoon_bundler_runtime, "~> 10.0"},
       {:duskmoon_bundler, "~> 10.0", runtime: Mix.env() != :prod},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
       {:jason, "~> 1.2"},
-      {:dns_cluster, "~> 0.3.1"},
-      {:gaoxy_http, "~> 0.12.2"},
+      {:dns_cluster, "~> 0.3"},
+      {:gaoxy_http, "~> 0.13"},
       # Phoenix requires Gaoxy's WebSockAdapter distribution for WebSocket upgrades.
-      {:websock_adapter, "~> 0.12.2", hex: :gaoxy_websock_adapter, override: true}
+      {:websock_adapter, "~> 0.13", hex: :gaoxy_websock_adapter, override: true}
     ]
   end
 
